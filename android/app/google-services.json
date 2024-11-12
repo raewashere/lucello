@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "752081285554",
+    "project_id": "cello-b5baa",
+    "storage_bucket": "cello-b5baa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752081285554:android:3f765fd2e46390fd8c34ab",
+        "android_client_info": {
+          "package_name": "com.escom.cello"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752081285554-o7ig19fvihgnoumkc15pd82spvqnk3c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2wkKCmASccrBlIcPKNsz-RWw9hKA1KWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752081285554-o7ig19fvihgnoumkc15pd82spvqnk3c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752081285554:android:91cc330e5ee73d218c34ab",
+        "android_client_info": {
+          "package_name": "com.escom.celloapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752081285554-o7ig19fvihgnoumkc15pd82spvqnk3c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2wkKCmASccrBlIcPKNsz-RWw9hKA1KWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752081285554-o7ig19fvihgnoumkc15pd82spvqnk3c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
