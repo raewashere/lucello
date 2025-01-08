@@ -52,11 +52,4 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC2wkKCmASccrBlIcPKNsz-RWw9hKA1KWM',
-    appId: '1:752081285554:android:91cc330e5ee73d218c34ab',
-    messagingSenderId: '752081285554',
-    projectId: 'cello-b5baa',
-    storageBucket: 'cello-b5baa.appspot.com',
-  );
 }
