@@ -1,6 +1,8 @@
+import 'package:celloapp/screens/vista_bienvenida.dart';
 import 'package:celloapp/screens/vista_contrasenia.dart';
 import 'package:celloapp/screens/vista_inicio.dart';
 import 'package:celloapp/screens/vista_registro.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'screens/vista_login.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +13,16 @@ Future<void> main() async {
   runApp(CelloApp());
 }
 
-class CelloApp extends StatelessWidget{
+class CelloApp extends StatefulWidget {
+  const CelloApp({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _MainState();
+}
+
+class _MainState extends State<CelloApp> {
+  final User? usuarioActual = FirebaseAuth.instance.currentUser;
+  late String? token = "";
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +30,6 @@ class CelloApp extends StatelessWidget{
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: const ColorScheme(
-
           primary: Color(0xFF58111A), // "#58111A"
           onPrimary: Color(0xFFE3E1E1), // "#E3E1E1"
           primaryContainer: Color(0xFFCC3448), // "#CC3448"
@@ -33,9 +43,7 @@ class CelloApp extends StatelessWidget{
           tertiary: Color(0xFF2B1158), // "#2B1158"
           onTertiary: Color(0xFFE3E1E1), // "#E3E1E1"
           tertiaryContainer: Color(0xFF9472E7), // "#9472E7"
-          onTertiaryContainer: Color(0xFF000F08), // "#000F08"
-
-          background: Color(0xFFCCC5B9), // "#CCC5B9"
+          onTertiaryContainer: Color(0xFF000F08), // "#CCC5B9"
           surface: Color(0xFF11584F), // Default white surface
           outline: Color(0xFFE3E1E1),
           onSurface: Color(0xFFE3E1E1), // Default on surface color
@@ -48,7 +56,8 @@ class CelloApp extends StatelessWidget{
         textTheme: const TextTheme(
             displayLarge: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 57, // Tamaño sugerido por las nuevas guías de Material 3
+              fontSize:
+                  57, // Tamaño sugerido por las nuevas guías de Material 3
               fontWeight: FontWeight.bold,
               letterSpacing: -0.25,
             ),
@@ -135,15 +144,14 @@ class CelloApp extends StatelessWidget{
               fontSize: 11,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
-            )
-        ),
+            )),
       ),
-      home: vista_login(),
+      home: usuarioActual != null ? vista_inicio() : vista_login(),
       routes: {
-        '/registro' : (context) => vista_registro(),
-        '/login' : (context) => vista_login(),
-        '/contrasenia' : (context) => vista_contrasenia(),
-        '/inicio' : (context) => vista_inicio(),
+        '/registro': (context) => vista_registro(),
+        '/login': (context) => vista_login(),
+        '/contrasenia': (context) => vista_contrasenia(),
+        '/inicio': (context) => vista_inicio()
       },
     );
   }

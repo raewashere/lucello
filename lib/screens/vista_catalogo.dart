@@ -1,27 +1,37 @@
+import 'package:celloapp/models/Sugerencia.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/Obra.dart';
 import '../services/Catalogo_controlador.dart';
+import '../services/Sugerencia_controlador.dart';
 
 class vista_catalogo extends StatefulWidget {
+  const vista_catalogo({super.key});
+
   @override
   State<StatefulWidget> createState() => _InfiniteScrollCatalogoState();
 }
 
-class _InfiniteScrollCatalogoState extends State<vista_catalogo>{
+class _InfiniteScrollCatalogoState extends State<vista_catalogo> {
   Catalogo_controlador catalogo_controlador = Catalogo_controlador();
   final ScrollController _scrollController = ScrollController();
-  List<Obra> _obras = [];
+  final List<Obra> _obras = [];
   bool _isLoading = false;
   int _currentOffset = 0;
   final int _limit = 10;
+  final TextEditingController _nombreObraController = TextEditingController();
+  final TextEditingController _compositorController = TextEditingController();
+  final TextEditingController _comentarioController = TextEditingController();
+  final User? usuarioActual = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
     _fetchMoreObras();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         _fetchMoreObras();
       }
     });
@@ -35,7 +45,8 @@ class _InfiniteScrollCatalogoState extends State<vista_catalogo>{
     });
 
     // Espera el resultado de obtener_catalogo
-    List<Obra> newObras = await catalogo_controlador.obtener_catalogo(_currentOffset, _limit);
+    List<Obra> newObras =
+        await catalogo_controlador.obtener_catalogo(_currentOffset, _limit);
     print(newObras.length);
     setState(() {
       _obras.addAll(newObras);
@@ -58,10 +69,10 @@ class _InfiniteScrollCatalogoState extends State<vista_catalogo>{
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _abrirFormulario(context);
-        },
-        child: Icon(Icons.add), // Icono del botón (puedes cambiarlo)
+        }, // Icono del botón (puedes cambiarlo)
         backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
         tooltip: 'Hacer sugerencia',
+        child: Icon(Icons.add),
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10),
@@ -81,13 +92,15 @@ class _InfiniteScrollCatalogoState extends State<vista_catalogo>{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(obra.nombreObra),
-                        Text('Compositor: ${obra.compositor} - Estilo: ${obra.estilo}'),
+                        Text(
+                            'Compositor: ${obra.compositor} - Estilo: ${obra.estilo}'),
                       ],
                     ),
                   ),
                   IconButton(
                     color: Theme.of(context).colorScheme.secondary,
-                    icon: Icon(Icons.graphic_eq), // Icono del botón (puedes cambiarlo)
+                    icon: Icon(
+                        Icons.graphic_eq), // Icono del botón (puedes cambiarlo)
                     onPressed: () {
                       // Lógica para editar la obra
                       //_editarObra(obra); // Método que puedes definir para editar
@@ -118,12 +131,15 @@ class _InfiniteScrollCatalogoState extends State<vista_catalogo>{
             children: [
               TextField(
                 decoration: InputDecoration(labelText: 'Nombre de la Obra'),
+                controller: _nombreObraController,
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Compositor'),
+                controller: _compositorController,
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Comentario'),
+                controller: _comentarioController,
               ),
               // Agrega más campos según sea necesario
             ],
@@ -133,19 +149,43 @@ class _InfiniteScrollCatalogoState extends State<vista_catalogo>{
               onPressed: () {
                 Navigator.of(context).pop(); // Cierra el formulario
               },
-              child: Text('Cancelar'),
+              child: Text('Cancelar',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                Sugerencia sugerencia = Sugerencia(
+                    nombreObra: _nombreObraController.text,
+                    compositor: _compositorController.text,
+                    comentario: _comentarioController.text,
+                    usuario: usuarioActual?.email);
+
+                Sugerencia_controlador controladorSugerencia =
+                    Sugerencia_controlador();
+                bool correcto =
+                    await controladorSugerencia.registra_sugerencia(sugerencia);
+                if (!correcto) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Hubo un error al hacer sugerencia')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Se registro correctamente')),
+                  );
+                }
                 // Lógica para guardar los datos del formulario
-                Navigator.of(context).pop(); // Cierra el formulario después de guardar
+                Navigator.of(context)
+                    .pop(); // Cierra el formulario después de guardar
               },
-              child: Text('Guardar'),
+              child: Text('Guardar',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
             ),
           ],
         );
       },
     );
   }
-
 }

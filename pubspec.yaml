@@ -34,7 +34,7 @@ dependencies:
   just_audio: ^0.9.36
   path_provider: ^2.0.11
   mysql_client: ^0.0.27
-  http: ^1.2.0
+  http: ^1.2.2
   firebase_core: ^3.4.0
   firebase_auth: ^5.3.1
 
@@ -43,6 +43,13 @@ dependencies:
   cupertino_icons: ^1.0.8
   speedometer_chart: ^1.0.8
   bluetooth_classic: ^0.0.2
+  audioplayers: ^6.1.0
+  audio_waveforms: ^1.2.0
+  file_picker: ^8.1.4
+  fl_chart: ^0.69.2
+  socket_io_client: ^3.0.2
+  rxdart: any
+  flutter_profile_picture: ^2.0.0
 
 dev_dependencies:
   flutter_test:

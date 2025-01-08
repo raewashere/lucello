@@ -1,10 +1,10 @@
 class Usuario {
   // Atributos privados
-  final int _folioUsuario;
-  final String _nombre;
-  final String _primerApellido;
-  final String _segundoApellido;
-  final String _correoElectronico;
+  late int _folioUsuario;
+  late String _nombre;
+  late String _primerApellido;
+  late String _segundoApellido;
+  late String _correoElectronico;
 
   // Constructor
   Usuario({
@@ -26,6 +26,17 @@ class Usuario {
   String get segundoApellido => _segundoApellido;
   String get correoElectronico => _correoElectronico;
 
+  set nombre(String value) {
+    _nombre = value; // Asignación correcta
+  }
+
+  set primerApellido(String value) {
+    _primerApellido = value; // Asignación correcta
+  }
+
+  set segundoApellido(String value) {
+    _segundoApellido = value; // Asignación correcta
+  }
   @override
   String toString() {
     return 'Usuario(folioUsuario: $_folioUsuario, nombre: $_nombre, primerApellido: $_primerApellido, segundoApellido: $_segundoApellido, correoElectronico: $_correoElectronico)';

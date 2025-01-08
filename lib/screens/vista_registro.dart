@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class vista_registro extends StatefulWidget {
+  const vista_registro({super.key});
+
   @override
   State<StatefulWidget> createState() => _vistaRegistroState();
 }
@@ -138,7 +140,8 @@ class _vistaRegistroState extends State<vista_registro> {
                                   if (_primerController.text.length <= 30) {
                                     if (_segundoController.text.length <= 30) {
                                       if (_emailController.text.length <= 30) {
-                                        if (this.validarEmail(_emailController.text)) {
+                                        if (validarEmail(
+                                            _emailController.text)) {
                                           if (_passwordController.text ==
                                               _passwordValidatorController
                                                   .text) {
@@ -148,31 +151,44 @@ class _vistaRegistroState extends State<vista_registro> {
                                                   content: Text(
                                                       'Enviando información, validar registro')),
                                             );
-                                            Usuario nuevoUsuario = Usuario(folioUsuario: 0,nombre:  _nombreController.text, primerApellido:  _primerController.text,segundoApellido:  _segundoController.text, correoElectronico:  _emailController.text);
+                                            Usuario nuevoUsuario = Usuario(
+                                                folioUsuario: 0,
+                                                nombre: _nombreController.text,
+                                                primerApellido:
+                                                    _primerController.text,
+                                                segundoApellido:
+                                                    _segundoController.text,
+                                                correoElectronico:
+                                                    _emailController.text);
 
-                                            Usuario_controlador controladorUsuario = Usuario_controlador();
-                                            bool correcto = await controladorUsuario.registra_usuario(nuevoUsuario);
-                                            if(!correcto){
+                                            Usuario_controlador
+                                                controladorUsuario =
+                                                Usuario_controlador();
+                                            bool correcto =
+                                                await controladorUsuario
+                                                    .registra_usuario(
+                                                        nuevoUsuario);
+                                            if (!correcto) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 const SnackBar(
                                                     content: Text(
                                                         'Hubo un error al registrarte')),
                                               );
-                                            }
-                                            else {
+                                            } else {
                                               _auth
                                                   .createUserWithEmailAndPassword(
-                                                  email:
-                                                  _emailController.text,
-                                                  password:
-                                                  _passwordController
-                                                      .text);
+                                                      email:
+                                                          _emailController.text,
+                                                      password:
+                                                          _passwordController
+                                                              .text);
+
+                                              _auth.currentUser
+                                                  ?.sendEmailVerification();
                                               Navigator.pushReplacementNamed(
                                                   context, '/login');
                                             }
-
-
                                           } else {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
@@ -181,8 +197,7 @@ class _vistaRegistroState extends State<vista_registro> {
                                                       'Verificar que las contraseñas son iguales')),
                                             );
                                           }
-                                        }
-                                        else {
+                                        } else {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
@@ -222,13 +237,13 @@ class _vistaRegistroState extends State<vista_registro> {
                                 }
                               }
                             },
-                            child: const Text('Registrarse'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   Theme.of(context).colorScheme.secondary,
                               foregroundColor:
                                   Theme.of(context).colorScheme.onSecondary,
                             ),
+                            child: const Text('Registrarse'),
                           ),
                         )
                       ],

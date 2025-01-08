@@ -7,7 +7,10 @@ class Obra {
   final String _compositor;
   final String _estilo;
   final String _dificultad;
-  final String? _perfilComportamiento; // Puede ser nulo
+  final String _perfilComportamiento; // Puede ser nulo
+  final int _numerador;
+  final int _denominador;
+  final int _num_compases;
 
   // Constructor
   Obra({
@@ -16,13 +19,19 @@ class Obra {
     required String compositor,
     required String estilo,
     required String dificultad,
-    String? perfilComportamiento,
+    required String perfilComportamiento,
+    required int numerador,
+    required int denominador,
+    required int num_compases,
   })  : _folioObra = folioObra,
         _nombreObra = nombreObra,
         _compositor = compositor,
         _estilo = estilo,
         _dificultad = dificultad,
-        _perfilComportamiento = perfilComportamiento;
+        _perfilComportamiento = perfilComportamiento,
+        _numerador = numerador,
+        _denominador = denominador,
+        _num_compases = num_compases;
 
   // Getters para acceder a los atributos
   int get folioObra => _folioObra;
@@ -31,13 +40,15 @@ class Obra {
   String get estilo => _estilo;
   String get dificultad => _dificultad;
   String? get perfilComportamiento => _perfilComportamiento;
+  int get numerador => _numerador;
+  int get denominador => _denominador;
+  int get num_compases => _num_compases;
 
   @override
   String toString() {
     return 'Obra(folioObra: $_folioObra, nombreObra: $_nombreObra, compositor: $_compositor, estilo: $_estilo, dificultad: $_dificultad, perfilComportamiento: $_perfilComportamiento)';
   }
 }
-
 
 // Ejemplo de uso
 Future<void> main() async {
@@ -58,7 +69,7 @@ Future<void> main() async {
     // Realiza la consulta y llena la lista de objetos Obra
     List<Obra> listaObras = [];
     var result = await conn.execute(
-        "SELECT folio_obra, nombre_obra, compositor, estilo, dificultad, perfil_comportamiento FROM catalogo");
+        "SELECT folio_obra, nombre_obra, compositor, estilo, dificultad, perfil_comportamiento, numerador, denominador, num_compases FROM catalogo");
 
     // Itera sobre los resultados y crea una lista de objetos Obra
     for (final row in result.rows) {
@@ -69,6 +80,9 @@ Future<void> main() async {
         estilo: row.colAt(3)!,
         dificultad: row.colAt(4)!,
         perfilComportamiento: row.colAt(5)!,
+        numerador: int.parse(row.colAt(6)!),
+        denominador: int.parse(row.colAt(7)!),
+        num_compases: int.parse(row.colAt(8)!),
       );
       listaObras.add(obra);
     }

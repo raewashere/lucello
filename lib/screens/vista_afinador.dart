@@ -1,22 +1,27 @@
 import 'dart:async';
 
+import 'package:celloapp/models/Afinador.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:speedometer_chart/speedometer_chart.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../services/ApiService.dart';
+
 class vista_afinador extends StatefulWidget {
+  const vista_afinador({super.key});
+
   @override
   State<StatefulWidget> createState() => _AfinadorPageState();
 }
 
 class _AfinadorPageState extends State<vista_afinador> {
-  double _lowerValue = -20;
-  double _upperValue = 20;
+  final ApiService apiService = ApiService();
+  late Afinador afinador;
+
   int start = -50;
   int end = 50;
   double cents = 0.0;
@@ -27,7 +32,7 @@ class _AfinadorPageState extends State<vista_afinador> {
   @override
   void initState() {
     super.initState();
-    const click = const Duration(milliseconds: 2000);
+    const click = Duration(milliseconds: 2000);
     var rng = Random();
     Timer.periodic(click, (Timer t) => eventObservable.add(cents));
   }
@@ -35,6 +40,7 @@ class _AfinadorPageState extends State<vista_afinador> {
   final AudioRecorder _recorder = AudioRecorder();
   bool isRecording = false;
   bool isAfinando = false;
+  String _fileName = "";
   String? _filePath;
   String note = "";
 
@@ -56,8 +62,8 @@ class _AfinadorPageState extends State<vista_afinador> {
 
     final directory = await getApplicationDocumentsDirectory();
     // Generate a unique file name using the current timestamp
-    String fileName = 'recording_${DateTime.now().millisecondsSinceEpoch}.wav';
-    _filePath = '${directory.path}/$fileName';
+    _fileName = 'recording_${DateTime.now().millisecondsSinceEpoch}.wav';
+    _filePath = '${directory.path}/$_fileName';
 
     // Define the configuration for the recording
     const config = RecordConfig(
@@ -82,65 +88,14 @@ class _AfinadorPageState extends State<vista_afinador> {
       });
 
       if (path != null) {
-        Uint8List audioData = await File(path).readAsBytes();
-        int sampleRate = 44100; // Define tu sample rate aquí
-        double frequency = obtenerFrecuencia(audioData.toList(), sampleRate);
-        //print("Ojo con la frecuencia :$frequency  ");
-        String calculatedNote = notaCercana(frequency);
-        //print("Nota calculada: $calculatedNote, Cents: $cents");
-        setState(() => note = calculatedNote);
+        File audioData = await File(path);
+        afinador = await apiService.afinador(audioData);
+        note = afinador.nota;
+        cents = afinador.cents;
       }
     } catch (e) {
       //print('Error al detener la grabación: $e');
     }
-  }
-
-  // Lógica de frecuencia y nota (reutiliza el código que ya tienes)
-  double obtenerFrecuencia(List<int> audioData, int sampleRate) {
-    int peakIndex = audioData.indexOf(audioData.reduce(max));
-    double frequency = (sampleRate * peakIndex) / audioData.length;
-    return frequency;
-  }
-
-  String notaCercana(double frecuencia) {
-    List<String> notas = [
-      'C',
-      'C#',
-      'D',
-      'D#',
-      'E',
-      'F',
-      'F#',
-      'G',
-      'G#',
-      'A',
-      'A#',
-      'B'
-    ];
-    double A4_frecuencia = 440.0;
-    int A4_indice = 9;
-
-    if (frecuencia.isNaN) {
-      frecuencia = A4_frecuencia;
-    }
-
-    int numMitadPasos = (12 * log(frecuencia / A4_frecuencia) / log(2)).round();
-    int indiceNota = (A4_indice + numMitadPasos) % 12;
-    int octava = 4 + (A4_indice + numMitadPasos) ~/ 12;
-
-    // Calcular la frecuencia exacta de la nota
-    double frequencyOfNearestNote = A4_frecuencia * pow(2, numMitadPasos / 12);
-    cents = calcularCents(frecuencia, frequencyOfNearestNote);
-
-    print(
-        "Frecuencia: $frecuencia, Mitad pasos: $numMitadPasos, indice Nota: $indiceNota ,octava $octava,cents $cents");
-
-    // Retornar tanto la nota como la frecuencia exacta de la nota
-    return '${notas[indiceNota]}$octava';
-  }
-
-  double calcularCents(double frecuencia, double frequencyOfNearestNote) {
-    return 1200 * log(frecuencia / frequencyOfNearestNote) / log(2);
   }
 
   @override
@@ -150,11 +105,11 @@ class _AfinadorPageState extends State<vista_afinador> {
       colorScheme: theme.colorScheme.copyWith(
         primary: Theme.of(context).colorScheme.secondary,
         secondary: Theme.of(context).colorScheme.primary,
-        background: Colors.grey,
+        surface: Colors.grey,
       ),
     );
     var speedOMeter = SpeedometerChart(
-      animationDuration: 1000,
+      animationDuration: 100,
       dimension: 400,
       minValue: 0,
       maxValue: 100,
@@ -182,10 +137,10 @@ class _AfinadorPageState extends State<vista_afinador> {
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 100),
             Text(
               isAfinando ? "Grabando..." : "Presiona para grabar",
               style: TextStyle(
@@ -223,6 +178,14 @@ class _AfinadorPageState extends State<vista_afinador> {
               padding: EdgeInsets.all(40.0),
               child: speedOMeter,
             ),
+            Text(
+                note.isNotEmpty
+                    ? "Cents: $cents"
+                    : "Cents: 0",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary))
           ],
         ),
       ),

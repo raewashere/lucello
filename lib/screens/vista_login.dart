@@ -1,14 +1,14 @@
-import 'package:celloapp/models/Usuario.dart';
-import 'package:celloapp/services/Usuario_controlador.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class vista_login extends StatefulWidget {
+  const vista_login({super.key});
+
   @override
-  State<StatefulWidget> createState() => _vistaLoginState ();
+  State<StatefulWidget> createState() => _vistaLoginState();
 }
 
-class _vistaLoginState extends State<vista_login>  {
+class _vistaLoginState extends State<vista_login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -19,7 +19,21 @@ class _vistaLoginState extends State<vista_login>  {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      Navigator.pushReplacementNamed(context, '/inicio');
+
+      if (_auth.currentUser!.emailVerified) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bienvenido de nuevo')),
+        );
+        Navigator.pushReplacementNamed(context, '/inicio');
+      } else {
+        await _auth.currentUser?.sendEmailVerification();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Aun no has, verificado tu cuenta, revisa el correo que te enviamos')),
+        );
+      }
+
       //print('User signed in: ${userCredential.user?.email}');
     } on FirebaseAuthException catch (e) {
       String mensajeError;
@@ -32,7 +46,8 @@ class _vistaLoginState extends State<vista_login>  {
       } else if (e.code == 'invalid-email') {
         mensajeError = 'El correo electrónico no tiene un formato válido.';
       } else {
-        mensajeError = 'Error al iniciar sesión. Por favor, inténtelo de nuevo.';
+        mensajeError =
+            'Error al iniciar sesión. Por favor, inténtelo de nuevo.';
       }
       // Mostrar un SnackBar con el mensaje de error
       ScaffoldMessenger.of(context).showSnackBar(
@@ -40,15 +55,17 @@ class _vistaLoginState extends State<vista_login>  {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Theme.of(context).colorScheme.primary ,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
-        child: SingleChildScrollView( // Envuelve en SingleChildScrollView
+        child: SingleChildScrollView(
+          // Envuelve en SingleChildScrollView
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -116,7 +133,7 @@ class _vistaLoginState extends State<vista_login>  {
                                 controller: _emailController,
                                 style: TextStyle(
                                     color:
-                                    Theme.of(context).colorScheme.primary),
+                                        Theme.of(context).colorScheme.primary),
                                 decoration: InputDecoration(
                                     hintText: "Correo electrónico",
                                     hintStyle: TextStyle(
@@ -126,9 +143,10 @@ class _vistaLoginState extends State<vista_login>  {
                                     border: InputBorder.none,
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                          color:  Theme.of(context).colorScheme.tertiary),
-                                    )
-                                ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
+                                    )),
                               ),
                             ),
                             Container(
@@ -140,7 +158,7 @@ class _vistaLoginState extends State<vista_login>  {
                                 obscureText: true,
                                 style: TextStyle(
                                     color:
-                                    Theme.of(context).colorScheme.primary),
+                                        Theme.of(context).colorScheme.primary),
                                 decoration: InputDecoration(
                                     hintText: "Contraseña",
                                     hintStyle: TextStyle(
@@ -150,9 +168,10 @@ class _vistaLoginState extends State<vista_login>  {
                                     border: InputBorder.none,
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                          color:  Theme.of(context).colorScheme.tertiary),
-                                    )
-                                ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
+                                    )),
                               ),
                             ),
                           ],
@@ -164,7 +183,8 @@ class _vistaLoginState extends State<vista_login>  {
                       TextButton(
                         child: Text("¿Olvidaste tu contraseña?",
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary)),
+                                color:
+                                    Theme.of(context).colorScheme.secondary)),
                         onPressed: () {
                           Navigator.pushNamed(context, '/contrasenia');
                         },
@@ -178,25 +198,25 @@ class _vistaLoginState extends State<vista_login>  {
                           children: <Widget>[
                             ElevatedButton(
                                 onPressed: _signIn,
-                                child: const Text('Iniciar sesion'),
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor:
-                                    Theme.of(context).colorScheme.secondary,
+                                        Theme.of(context).colorScheme.secondary,
                                     foregroundColor: Theme.of(context)
                                         .colorScheme
-                                        .onSecondary)),
+                                        .onSecondary),
+                                child: const Text('Iniciar sesion')),
                             const SizedBox(height: 30),
                             ElevatedButton(
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/registro');
                                 },
-                                child: const Text('Registrarse'),
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor:
-                                    Theme.of(context).colorScheme.secondary,
+                                        Theme.of(context).colorScheme.secondary,
                                     foregroundColor: Theme.of(context)
                                         .colorScheme
-                                        .onSecondary)),
+                                        .onSecondary),
+                                child: const Text('Registrarse')),
                           ],
                         ),
                       )

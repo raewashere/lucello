@@ -1,84 +1,70 @@
 import 'package:flutter/material.dart';
 
-class vista_bienvenida extends StatelessWidget {  @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Theme.of(context).colorScheme.onPrimary,
-    body: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Container(),
-          ),
-          Expanded(
-            flex: 8,
-            child: Column(
-              children: [
-                _buildSection(
-                  context,
-                  icon: Icons.album,
-                  title: "Bienvenido",
-                  subtitle: "Tu plataforma de análisis de interpretaciones",
-                ),
-                _buildSection(
-                  context,
-                  icon: Icons.music_note,
-                  title: "Afina tu instrumento",
-                  subtitle: "Un instrumento afinado ayuda a hacer un mejor análisis",
-                ),
-                _buildSection(
-                  context,
-                  icon: Icons.analytics,
-                  title: "Analiza tu ejecución",
-                  subtitle: "Recibe retroalimentación de cómo tocas",
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildSection(BuildContext context,
-    {required IconData icon, required String title, required String subtitle}) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 10.0),
-    child: Column(
-      children: [
-        ListTile(
-          textColor: Theme.of(context).colorScheme.tertiary,
-          leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
-          title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-          subtitle: Text(subtitle, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+class vista_bienvenida extends StatelessWidget {
+  const vista_bienvenida({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            TextButton(
-              onPressed: () {
-                // Acción de botón Afinador
-              },
-              child: Text("Afinador"),
+            SizedBox(height: 16),
+            ListTile(
+              textColor: Theme.of(context).colorScheme.tertiary,
+              leading: Icon(Icons.album,
+                  color: Theme.of(context).colorScheme.primary),
+              title: Text("Bienvenido",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary)),
+              subtitle: Text("Tu platforma de analisis de interpretaciones",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary)),
             ),
-            TextButton(
-              onPressed: () {
-                // Acción de botón Analizar
-              },
-              child: Text("Analizar"),
+            SizedBox(height: 16),
+            ListTile(
+              textColor: Theme.of(context).colorScheme.tertiary,
+              leading: Icon(Icons.tune,
+                  color: Theme.of(context).colorScheme.primary),
+              title: Text("Afina tu instrumento",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary)),
+              subtitle: Text(
+                  "Un instrumento afinado ayuda a hacer un mejor analisis",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary)),
             ),
+            SizedBox(height: 16),
+            ListTile(
+              textColor: Theme.of(context).colorScheme.tertiary,
+              leading: Icon(Icons.graphic_eq,
+                  color: Theme.of(context).colorScheme.primary),
+              title: Text("Analiza tu ejecucion",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary)),
+              subtitle: Text("Revisa tu retroalimentacion de como tocas",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary)),
+            ),
+            SizedBox(height: 80),
+            Padding(
+              padding: EdgeInsets.all(50),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(children: [
+                    Image.asset('assets/images/efe.png',
+                        scale: 3.5, color: Colors.black),
+                    Padding(padding: EdgeInsets.all(80)),
+                    Image.asset('assets/images/efe-i.png',
+                        scale: 3.5, color: Colors.black)
+                  ]),
+                ],
+              ),
+            )
           ],
         ),
-      ],
-    ),
-  );
-}
+      ),
+    );
+  }
 }
